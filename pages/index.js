@@ -1,4 +1,7 @@
 import Head from 'next/head'
+import Newsletter from "../component/newsletter"
+//import SideComponent from "../component/sideComponent"
+import { SideComponent } from "../component/sideComponent"
 import { getAllData } from '../lib/api'
 import {
   Button,
@@ -9,7 +12,8 @@ import {
   Image,
   Stack,
   Divider,
-  Link
+  Link,
+  SimpleGrid
 } from '@chakra-ui/core'
 
 import { BiBone } from "react-icons/bi"
@@ -18,7 +22,6 @@ import { SiRiot } from "react-icons/si"
 import { FaPaw } from "react-icons/fa"
 
 const getImageUrl = ({url}) => {
-  console.log("URL :", url)
   if (!url || url === null) {
     return (null)
   } else if ( url.startsWith('/')) {
@@ -30,7 +33,6 @@ const getImageUrl = ({url}) => {
 }
 
 const Section = ({sections, titre, description, dir}) => {
-  //console.log("SEC:", sections, "URL:", url)
   if (!sections) {
     return null
   }
@@ -42,7 +44,6 @@ const Section = ({sections, titre, description, dir}) => {
   if (has_picture === true) {
     imageUrl = getImageUrl(sections.image)
   }
-  console.log("NEW URL:", imageUrl, "for :", titre, "has pic:",has_picture)
   return (
     <Stack py='16'>
        <Stack display={{base:"flex", lg:"none"}} align="center" textAlign="center" w="100%">
@@ -71,31 +72,36 @@ const Section = ({sections, titre, description, dir}) => {
   )
 }
 
-const Comment = ({name, job, quote, url}) => {
+const Comment = ({name, job, quote, reco}) => {
+  if (!reco) {
+    return null
+  }
+  const imageUrl = `${
+    reco.profile.url.startsWith('/') ? "http://localhost:1337" : ''
+  }${reco.profile.url}`
   return (
-    <Box display={{ md: "flex" }} mb={['5%', "0%", "0%", "0%"]}>
-      <Box pr={['5%', "0%", "0%", "0%"]} lineHeight="110%" textAlign="center" >
-        <Image src={url} rounded="full" p={['1%', "0%", "0%", "0%"]} width={['200px', "0%", "0%", "0%"]} mx="auto" mb="4%"></Image>
+    <Stack w={{base: "60%", lg:"20%"}} align="center" pb="6">
+      <Image src={imageUrl} alt={name} rounded="full" size="150px"></Image>
+      <Stack align="center" textAlign="center">
         <Text>{name}</Text>
         <Text fontStyle="italic">{job}</Text>
-      </Box>
-      <Box>
-        <Text>{quote}</Text>
-      </Box>
-    </Box>
+        <Box>
+          <Text>{quote}</Text>
+        </Box>
+      </Stack>
+    </Stack>
   )
 }
 export default function Home({ data }) {
-  //console.log("here is the data :", data.section, "recommandations now :", data.reco)
   const sections = data.section
   const recommandations = data.reco
-  //console.log("section first :", sections[0].image.url, "recommandations now :", recommandations)
   return (
-  <div>
-      <head>
-      
-      </head>
+  <Flex direction="column"
+  alignItems="center"
+  justifyContent="flex-start"
+  width="100%">
 
+    <Head></Head>
     <Box
       backgroundColor="black"
       color="white"
@@ -105,128 +111,42 @@ export default function Home({ data }) {
 
       <header>
         <Flex mb="5%">          
-            <Box width={['0%', 0.6, 0.6]} pt="1%">
+          <Box width={['0%', 0.6, 0.6]} pt="1%">
+            <Link href="#">
               <Box as={FaPaw} fontSize={["0", "2xl", "3xl", "5xl"]} color="acert_red"/>
-            </Box>
-            <Box position="absolute" right="10%">
-              <Heading textTransform="uppercase" fontSize={["0", "xs", "md", "xl"]} pt="5%">
+            </Link>
+          </Box>
+          <Box position="absolute" right="10%">
+            <Heading textTransform="uppercase" fontSize={["0", "xs", "md", "xl"]} pt="5%">
+              Nextgen identity & access management
+            </Heading>
+          </Box>
+          <Box width={["100%", 0, 0]} pb="5%" pt="2%">
+            <Stack isInline align="left">
+                <Box as={FaPaw} fontSize={["xl", "0", "0", "0"]} color="acert_red"/>
+              <Heading  textTransform="uppercase" fontSize={["xs", "0", "0", "0"]} fontStyle="bold" pt="1%">
                 Nextgen identity & access management
               </Heading>
-            </Box>
-            <Box width={["100%", 0, 0]} pb="5%" pt="2%">
-              <Stack isInline align="left">
-                  <Box as={FaPaw} fontSize={["xl", "0", "0", "0"]} color="acert_red"/>
-                <Heading  textTransform="uppercase" fontSize={["xs", "0", "0", "0"]} fontStyle="bold" pt="1%">
-                  Nextgen identity & access management
-                </Heading>
-              </Stack>
-            </Box>
-          </Flex>
+            </Stack>
+          </Box>
+        </Flex>
       </header>
       
       <main>
       {sections.map((section, i) => (
         <Section sections={section} titre={section.titre} description={section.description} dir={section.direction} key={i}/>
       ))}
-      <Section titre="titre2" description="description2"/>
 
-{/*Recommendation section for middle and large screen size*/}    
-      <Box w={[0, "100%", "100%", "100%"]} borderWidth="1px" rounded="lg" borderColor="#0F0F0F" mt="15%">
-        <Box mb={[0, "5%", "5%", "5%"]} display={{base:"none", lg:"block"}} textAlign="center">
-            <Heading fontSize={[0, "xl", "3xl", "5xl"]}>They Recommend Us</Heading>
-          </Box>
-
-        <Stack mt={[0, "5%", "5%", "5%"]} justify="space-around" align="center">
-          
-        <Box display={{ md: "flex" }} fontSize={[0, "md", "lg", "xl"]} >
-            
-            <Box p={[0, "2%", "2%", "2%"]} w="25%">
-              <Image src="https://pbs.twimg.com/profile_images/964468428856872960/Mo11mN9b_400x400.jpg" alt="Fabien" rounded="full" w="180px" mx="auto" mb="4%"></Image>
-              <Text textAlign="center" >Fabien Imbault</Text>
-              <Text textAlign="center" fontStyle="italic" mb="4%">CEO acert.io</Text>
-              <Text textAlign="center">Nextgen is awsome, Nextgen is awsome, Nextgen is awsome, Nextgen is awsome, Nextgen is awsome.</Text>
-            </Box>
-
-            <Box p={[0, "2%", "2%", "2%"]}  w="25%">
-            <Image src="https://media-exp1.licdn.com/dms/image/C4D03AQHkci2rD306mw/profile-displayphoto-shrink_200_200/0?e=1603929600&v=beta&t=fJ_iUaTVHajI120N_WG9_q_SXc1nN04CtgQZIsQoii8" alt="Smart trainee" rounded="full" w="180px" mx="auto" mb="4%"></Image>
-              <Text textAlign="center" >François</Text>
-              <Text textAlign="center" fontStyle="italic" mb="4%">Trainee</Text>
-              <Text textAlign="center">This web site is cool but honestly, I prefer the other one: more work, more content and fewer dogs.</Text>
-            </Box>
-
-            <Box p={[0, "2%", "2%", "2%"]}  w="25%">
-              <Image src="\bernese-mountain-dog-wears-glasses.jpg" alt="Smart dog" rounded="full" w="180px" mx="auto" mb="4%"></Image>
-              <Text textAlign="center" >Bandit</Text>
-              <Text textAlign="center" fontStyle="italic" mb="4%">Smart dog</Text>
-              <Text textAlign="center">Woof, woof wof warf wofwof. Nextgen wof, wof woof! Woof woooof. Warf woof wif!</Text>
-            </Box>
-
-            <Box p={[0, "2%", "2%", "2%"]}  w="25%">
-              <Image src="\Kevin-Mitnick-crop.jpg" alt="Kevin Mitnick" rounded="full"  w="180px" mx="auto" mb="4%"></Image>
-              <Text textAlign="center" >Kevin Mitnick</Text>
-              <Text textAlign="center" fontStyle="italic" mb="4%">Famous hacker</Text>
-              <Text textAlign="center">I never managed to crack Fabien's password. I think this says it all.</Text>
-            </Box>
-            
-          </Box>
+        <Flex align="center" justify="space-around" display={{base:"none", lg:"flex"}}>
+        {recommandations.map((reco, i) => (
+          <Comment name={reco.name} job={reco.job} quote={reco.quote} reco={reco} key={i}/>
+        ))}
+        </Flex>
+        <Stack align="center" justify="space-around" display={{base:"flex", lg:"none"}}>
+        {recommandations.map((reco, i) => (
+          <Comment name={reco.name} job={reco.job} quote={reco.quote} reco={reco} key={i}/>
+        ))}
         </Stack>
-      </Box>
-
-
-{/*Recommendation section for small screen size*/}
-      <Box 
-        fontSize={["sm", 0, 0, 0]}
-        mb={['15%', "0%", "0%", "0%"]}
-        mt={['5%', "0%", "0%", "0%"]}
-        p={['5%', "0%", "0%", "0%"]}
-        borderWidth="1px" rounded="lg" borderColor="#0F0F0F"
-      >
-          <Box display={{base:"none", lg:"block"}} textAlign="center" pb={['10%', "0%", "0%", "0%"]}>
-            <Heading fontSize={["xl", 0, 0, 0]}>They Recommend Us</Heading>
-          </Box>
-
-          <Comment 
-          name="Fabien Imbault"
-          job="CEO acert.io"
-          quote="Nextgen is awsome, Nextgen is awsome, Nextgen is awsome, Nextgen is awsome, Nextgen is awsome."
-          url="https://pbs.twimg.com/profile_images/964468428856872960/Mo11mN9b_400x400.jpg"
-          />
-
-          <Box display={{ md: "flex" }} mb={['5%', "0%", "0%", "0%"]}>
-            <Box pr={['5%', "0%", "0%", "0%"]} lineHeight="110%" textAlign="center" >
-              <Image src="https://media-exp1.licdn.com/dms/image/C4D03AQHkci2rD306mw/profile-displayphoto-shrink_200_200/0?e=1603929600&v=beta&t=fJ_iUaTVHajI120N_WG9_q_SXc1nN04CtgQZIsQoii8" alt="Smart trainee" rounded="full" p={['1%', "0%", "0%", "0%"]} width={['200px', "0%", "0%", "0%"]} mx="auto" mb="4%"></Image>
-              <Text>François</Text>
-              <Text fontStyle="italic">Trainee</Text>
-            </Box>
-            <Box>
-              <Text>This web site is cool but honestly, I prefer the other one: more work, more content and fewer dogs.</Text>
-            </Box>
-          </Box>
-
-          <Box display={{ md: "flex" }} mb={['5%', "0%", "0%", "0%"]}>
-            <Box pr={['5%', "0%", "0%", "0%"]} lineHeight="110%" textAlign="center" >
-              <Image src="\bernese-mountain-dog-wears-glasses.jpg" alt="Smart dog" rounded="full" p={['1%', "0%", "0%", "0%"]} width={['200px', "0%", "0%", "0%"]} mx="auto" mb="4%"></Image>
-              <Text>Bandit</Text>
-              <Text fontStyle="italic">Smart dog</Text>
-            </Box>
-            <Box>
-              <Text>Woof, woof wof warf wofwof. Nextgen wof, wof woof! Woof woooof. Warf woof wif!</Text>
-            </Box>
-          </Box>
-
-          <Box display={{ md: "flex" }} mb={['5%', "0%", "0%", "0%"]}>
-            <Box pr={['5%', "0%", "0%", "0%"]} lineHeight="110%" textAlign="center" >
-              <Image src="\Kevin-Mitnick-crop.jpg" alt="Kevin Mitnick" rounded="full" p={['1%', "0%", "0%", "0%"]} width={["200px", "0%", "0%", "0%"]} mx="auto" mb="4%"></Image>
-              <Text>Kevin Mitnick</Text>
-              <Text fontStyle="italic">Famous hacker</Text>
-            </Box>
-            <Box>
-              <Text>I never managed to crack Fabien's password. I think this says it all.</Text>
-            </Box>
-          </Box>
-
-      </Box>
-
 
 {/*Small dog picture on the top of social medias*/}
         <Box width={["65%", "40%", "25%"]} ml="auto" mr="auto" mt="15%" pr={["15%", "7%", "5%"]}>
@@ -257,7 +177,8 @@ export default function Home({ data }) {
       
 
       </main>
-
+      <SideComponent link="#" line1="bring me back" line2="to the normal website"/>
+      <Newsletter />
       <footer>
         <Flex pt="10%" pb="2%" fontSize={["md", "lg", "xl", "2xl"]} >
           <span>WOOF</span>
@@ -281,13 +202,12 @@ export default function Home({ data }) {
        
       </footer>
     </Box>
-  </div>
+  </Flex>
   )
 }
 
 export async function getStaticProps() {
   const data = (await getAllData())
-  //console.log("here is the data :", data.section, "recommandations now :", data.reco)
   return {
     props: { data }
   }
