@@ -18,7 +18,8 @@ import { SiRiot } from "react-icons/si"
 import { FaPaw } from "react-icons/fa"
 
 const getImageUrl = ({url}) => {
-  if (!url) {
+  console.log("URL :", url)
+  if (!url || url === null) {
     return (null)
   } else if ( url.startsWith('/')) {
     const imageUrl = `${
@@ -28,18 +29,28 @@ const getImageUrl = ({url}) => {
   }
 }
 
-const Section = ({titre, description, url, dir}) => {
-  if (url) {
-    const imageUrl = getImageUrl(url)
+const Section = ({sections, titre, description, dir}) => {
+  //console.log("SEC:", sections, "URL:", url)
+  if (!sections) {
+    return null
   }
+  var has_picture = false
+  if (sections.image != null) {
+    has_picture = true
+  }
+  var imageUrl = "url"
+  if (has_picture === true) {
+    imageUrl = getImageUrl(sections.image)
+  }
+  console.log("NEW URL:", imageUrl, "for :", titre, "has pic:",has_picture)
   return (
     <Stack py='16'>
-       <Stack display={{base:"flex", lg:"none"}} align="center" textAlign="center">
+       <Stack display={{base:"flex", lg:"none"}} align="center" textAlign="center" w="100%">
           <Stack maxW={{base:"200px", sm:"300px", md:"400px"}} >
             <Heading fontSize={["xl", "2xl", "4xl", "6xl"]}>{titre}</Heading>
             <Text fontSize={["sm", "md", "lg", "xl"]} color="#FFFAFF"  pt="5%">{description}</Text>
           </Stack>
-          {url ?
+          {has_picture === true ?
           <Box w={{base:"90%", md:"66%"}}>
             <Image src={imageUrl} alt="oui"/>
           </Box>
@@ -50,7 +61,7 @@ const Section = ({titre, description, url, dir}) => {
             <Heading fontSize={["xl", "2xl", "4xl", "6xl"]}>{titre}</Heading>
             <Text fontSize={["sm", "md", "lg", "xl"]} color="#FFFAFF"  pt="5%">{description}</Text>
           </Stack>
-          {url ?
+          {has_picture === true ?
           <Box w="40%">
             <Image src={imageUrl} alt="oui"/>
           </Box>
@@ -78,13 +89,13 @@ export default function Home({ data }) {
   //console.log("here is the data :", data.section, "recommandations now :", data.reco)
   const sections = data.section
   const recommandations = data.reco
-  console.log("section first :", sections[0].image.url, "recommandations now :", recommandations)
+  //console.log("section first :", sections[0].image.url, "recommandations now :", recommandations)
   return (
   <div>
       <head>
       
       </head>
-      
+
     <Box
       backgroundColor="black"
       color="white"
@@ -115,114 +126,9 @@ export default function Home({ data }) {
       
       <main>
       {sections.map((section, i) => (
-        <Section titre={section.titre} description={section.description} dir={section.direction} key={i}/>
+        <Section sections={section} titre={section.titre} description={section.description} dir={section.direction} key={i}/>
       ))}
       <Section titre="titre2" description="description2"/>
-{/*Article 1*/}
-        <Box 
-          height="100%"
-          width="100%"
-          p="5% 0% 5% 0%"
-          display={{ md: "flex" }}
-        >
-          
-            <Box width={['100%', 0.8, 0.8]}>
-              <Heading  fontSize={["xl", "2xl", "4xl", "6xl"]}>     
-                data.title1
-              </Heading>
-
-              <Text  fontSize={["sm", "md", "lg", "xl"]} color="#FFFAFF"  pt="5%">
-                data.article1
-              </Text>
-            </Box>
-        
-{/*Image for middle and large screen size for article 1*/} 
-              <Box width={[0, '100%', '100%']}>
-                <Image src="\black-dog-in-the-dark.jpg" alt="black dog in the dark" />
-              </Box>
-            </Box>
-
-{/*Image for middle and large screen size article 1*/} 
-            <Box width={['100%', 0, 0]}>
-              <Image src="\black-dog-in-the-dark.jpg" alt="black dog in the dark" />
-            </Box>
-
-
-{/*Article 2*/}
-        <Box
-          height="100%"
-          width="100%"
-          py="5%"
-          px={['0%', '20%', '25%']}
-          mt="5%">
-          <Box width="100%">
-            <Heading fontSize={["xl", "2xl", "4xl", "6xl"]}>     
-              data.title2
-            </Heading>
-
-            <Text fontSize={["sm", "md", "lg", "xl"]} color="#FFFAFF" pt="5%">
-              data.article2
-            </Text>
-          </Box>
-        </Box>
-
-{/*Article 3*/}      
-        <Box 
-          height="100%"
-          width="100%"
-          p="5% 0% 5% 0%"
-          mt="5%" 
-          display={{ md: "flex" }}
-        >
-{/*Image for middle and large screen size article 3*/}       
-          <Box width={['0%', "100%", "100%"]}>
-            <Image src="https://us.123rf.com/450wm/damedeeso/damedeeso1609/damedeeso160900030/62512485-jack-russell-terrier-dog-isolated-on-black-dark-background-looking-at-you-frontal-isolated.jpg?ver=6" alt="A very sad russell terrier"/>
-          </Box>
-          
-{/*Text Article 3*/}
-          <Box width={['100%', 0.8, 0.8]}>
-            <Heading fontSize={["xl", "2xl", "4xl", "6xl"]}>     
-              data.title3
-            </Heading>
-
-            <Text fontSize={["sm", "md", "lg", "xl"]} color="#FFFAFF" pt="5%">
-              data.article3
-            </Text>
-          </Box>
-        </Box>
-
-
-{/*Image for small screen article 3*/}
-        <Box width={['100%', 0, 0]}>
-        <Image src="https://us.123rf.com/450wm/damedeeso/damedeeso1609/damedeeso160900030/62512485-jack-russell-terrier-dog-isolated-on-black-dark-background-looking-at-you-frontal-isolated.jpg?ver=6" alt="A very sad russell terrier" /> 
-        </Box>
-        
-
-{/*Article 4*/}
-        <Box 
-          height="100%"
-          width="100%"
-          py="5%"
-          px={['0%', '20%', '25%']}
-          mt="5%"           
-        >
-          <Box width="100%">
-            <Heading
-              fontSize={["xl", "2xl", "4xl", "6xl"]}
-            >     
-              data.title4
-            </Heading>
-
-            <Text
-              fontSize={["sm", "md", "lg", "xl"]}
-              color="#FFFAFF"
-              pt="5%"      
-            >
-              data.article4
-            </Text>
-          </Box>
-        </Box>
-
 
 {/*Recommendation section for middle and large screen size*/}    
       <Box w={[0, "100%", "100%", "100%"]} borderWidth="1px" rounded="lg" borderColor="#0F0F0F" mt="15%">
